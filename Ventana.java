@@ -1,4 +1,6 @@
 import java.awt.EventQueue;
+import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -6,8 +8,14 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
+import javax.swing.*;
+
 import java.awt.BorderLayout;
+
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 
@@ -16,8 +24,9 @@ import java.awt.Dimension;
 
 public class Ventana extends JFrame {
 	
-	int player_x =  200;
-	int player_y = 180;
+	int player_x =  40;
+	int player_y = 40;
+    Color Matrix = new Color(0,255,43);
 
 	/**
 	 * Launch the application.
@@ -39,33 +48,71 @@ public class Ventana extends JFrame {
 	 */
 	public Ventana(){
 		
-		setBounds(750, 140, 650, 500);
+		setBounds(500, 100, 1000, 700);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		JPanel Juego = new JPanel();
-		Juego.setBackground(Color.cyan);
+		Juego.setBackground(new Color(100,186,1));
 		getContentPane().add(Juego, BorderLayout.CENTER);
 		
-		JPanel panelAbajo = new JPanel();
-		panelAbajo.setBackground(new Color(0, 255, 0));
+
+        FlowLayout flowlayout = new FlowLayout();
+        flowlayout.setHgap(10);
+
+		JPanel panelAbajo = new JPanel(flowlayout);
+		panelAbajo.setBackground(Color.black);
+        panelAbajo.setBorder(BorderFactory.createLineBorder(Matrix, 1));
 		getContentPane().add(panelAbajo, BorderLayout.SOUTH);
 		
-		JButton Reiniciar = new JButton("Reiniciar");
-        Reiniciar.addActionListener(new ActionListener() {
+        JLabel tiempo = new JLabel("T i e m p o: [00:00:00]",JLabel.LEFT);
+        tiempo.setForeground(Matrix);
+        tiempo.setFont(new Font("Itim", Font.BOLD, 15));
+        
+        ActionListener listener = new ActionListener() {
+            
+            int contador = 0;
 
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                contador++;
+
+                int segundosTotales = contador;
+                int horas = segundosTotales / 3600;
+                int minutos = (segundosTotales % 3600) / 60;
+                int segundos = segundosTotales % 60;
+                tiempo.setText("T i e m p o: [" + String.format("%02d:%02d:%02d", horas, minutos, segundos) + "]");
+            }
+        };
+        
+        Timer timer = new Timer(1000, listener);
+        timer.start();
+
+        
+		JButton Reiniciar = new JButton("R e i n i c i a r");
+        Reiniciar.setBackground(Color.black);
+        Reiniciar.setFocusPainted(false);
+        Reiniciar.setForeground(Matrix);
+        Reiniciar.setBorderPainted(false);
+        Reiniciar.setFont(new Font("Itim", Font.BOLD, 15));
+        UIManager.put("Button.select", Matrix);
+        
+        Reiniciar.addActionListener(new ActionListener() {
+            
             @Override
             public void actionPerformed(ActionEvent e) {
                 player_x =  0;
                 player_y = 0;
                 Juego.repaint();
+                Juego.revalidate();
                 Juego.requestFocus(true);
             }
-
+            
             
             
         });
-
+        
 		panelAbajo.add(Reiniciar);
+        panelAbajo.add(tiempo);
 		
 		Juego.add(new MyGraphics());
 		
@@ -82,26 +129,26 @@ public class Ventana extends JFrame {
 				// TODO Auto-generated method stub
 				
 				int tecla = e.getKeyCode();
-				System.out.println(tecla);
+				//System.out.println(tecla);
 				
 
 				if(tecla == 87 && player_y > 0) {
-					player_y -= 5;
+					player_y -= 10;
 				}
 				
 				if(tecla == 65 && player_x > 0) {
-					player_x -= 5;
+					player_x -= 10;
 				}
 				
-				if(tecla == 83 && player_y < 360-50) {
-					player_y += 5;
+				if(tecla == 83 && player_y < 600-20) {
+					player_y += 10;
 				}
 				
-				if(tecla == 68 && player_x < 560-50) {
-					player_x += 5;
+				if(tecla == 68 && player_x < 800-20) {
+					player_x += 10;
 				}
-				
-				Juego.repaint();
+
+                Juego.repaint();
 			}
 
 			@Override
@@ -114,6 +161,8 @@ public class Ventana extends JFrame {
 		
 		Juego.setFocusable(true);
 		Juego.requestFocus();
+        Juego.repaint();
+        Juego.revalidate();
 		this.setVisible(true);
 	}
 	
@@ -121,7 +170,7 @@ public class Ventana extends JFrame {
 		private static final long serialVersionUID = 1L;
 		
 		MyGraphics(){
-			setPreferredSize(new Dimension(550,400));
+			setPreferredSize(new Dimension(800,600));
 		}
 		
 		public void paint(Graphics g){
@@ -133,25 +182,24 @@ public class Ventana extends JFrame {
 	        //g.drawLine(30, 70, 770, 70);
 
 	        //fondo
-	        g.setColor(Color.WHITE);
-	        g.fillRect(0, 0, 550, 500);
+	        g.setColor(Color.black);
+	        g.fillRect(0, 0, 800, 600);
 	        //g.setColor(Color.BLACK);
 	        //g.drawRect(40, 40, 560, 60);
 
 	        //player
-	        g.setColor(Color.black);
-	        g.fillRect(player_x, player_y, 50, 50);
+	        g.fillRect(player_x, player_y, 20, 20);
 	        
 	        //Rectángulo redondeado	
 	        //g.setColor(Color.red);
 	        //g.drawRoundRect(420, 100, 350, 60, 50, 50);
 	        
-	        Rect r = new Rect(player_x,player_y,20,20,new Color(0,0,0));
+	        Rect r = new Rect(player_x,player_y,20,20,Matrix);
 	        g.setColor(r.c);
 	        g.fillRect(r.x, r.y, r.w, r.h);
 	        
 	        
-	        Rect p = new Rect(300,60,40,200,Color.decode("#FF5733"));
+	        Rect p = new Rect(300,60,40,200,Matrix);
 	        g.setColor(p.c);
 	        g.fillRect(p.x, p.y, p.w, p.h);
 	        
@@ -177,16 +225,14 @@ public class Ventana extends JFrame {
 		}
 		
 		public boolean colision(Rect target) {
-			if (this.x < target.x + target.w && 
-				this.x + this.w > target.x   &&
-					
-				this.y < target.y + target.h && this.y + this.h > target.y) {
+			if (this.x < target.x + target.w && this.x + this.w > target.x &&               
+                this.y < target.y + target.h && this.y + this.h > target.y) {
 				
 				return true;
+                
 			}
 			return false;
 		}
 	}
-	
 	
 }
