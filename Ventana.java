@@ -8,6 +8,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.Random;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -34,10 +35,84 @@ public class Ventana extends JFrame {
 	int player_x =  40;
 	int player_y = 40;
 	int contador = 0;
+	int var = 20;
 	int segundosTotales;
 	int horas,minutos,segundos;
-	int cancion = 1;
+	Random rand = new Random();
+    int nivel = rand.nextInt(2) + 1;
 	Clip clip;
+	
+
+	private int[][] laberinto = {
+		{0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+		{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,0,1,1,1,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,1,1,1,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+		
+	};
+
+	private int[][] laberinto2 = {
+		{0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+		{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+		
+	};
+
+	
+
 
 	/**
 	 * Launch the application.
@@ -55,14 +130,19 @@ public class Ventana extends JFrame {
 		});
 	}
 
+
+	
+
 	/**
 	 * Create the application.
 	 */
 	public Ventana(){
 		
+		setTitle("Labyrinth");
 		setLayout(new BorderLayout());
 		setBounds(500, 100, 1000, 703);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setResizable(false);
 		
 		JPanel Juego = new JPanel();
 		Juego.setBackground(new Color(113,105,59));
@@ -112,7 +192,7 @@ public class Ventana extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-				
+
 				contador = 0;
 
 				segundosTotales = contador;
@@ -156,32 +236,21 @@ public class Ventana extends JFrame {
         panelAbajo.add(tiempo);
 
 		Nivel();
-		
-		
+
 		Juego.add(new MyGraphics());
 		
 		Juego.addKeyListener(new KeyListener() {
 
 			@Override
-			public void keyTyped(KeyEvent e) {
-				
-				
-			}
+			public void keyTyped(KeyEvent e){}
 
 			@Override
 			public void keyPressed(KeyEvent e) {
-				
-				int tecla = e.getKeyCode();
-				//System.out.println(tecla);
-				Rect r = new Rect(player_x,player_y,20,20,Color.red);
 
-
-	        
+				Rect player = new Rect(player_x,player_y,20,20,Color.red);
 	        	Rect meta = new Rect(700,60,20,20,Color.cyan);
 
-				Rect barrera = new Rect(700,60,20,20,Color.GREEN);
-
-				if(r.colision(meta)){
+				if(player.colision(meta)){
 					try {
 						
 						timer.stop();
@@ -189,9 +258,9 @@ public class Ventana extends JFrame {
 						// Crear objeto Clip para reproducir el audio
 						Clip clip = AudioSystem.getClip();
 
-						if(cancion == 1){
+						if(nivel == 1){
 							clip.open(AudioSystem.getAudioInputStream(new File("FinishAdventure.wav").getAbsoluteFile()));
-						}else if(cancion ==2){
+						}else if(nivel ==2){
 							clip.open(AudioSystem.getAudioInputStream(new File("FinishSpeed.wav").getAbsoluteFile()));
 						}
 			
@@ -219,59 +288,63 @@ public class Ventana extends JFrame {
 					int choice = JOptionPane.showOptionDialog(null, "Has finalizado el laberinto en [" + String.format("%02d:%02d:%02d", horas, minutos, segundos) + "]!", "Felicidades!", JOptionPane.YES_NO_OPTION, 1, null, options, options[0]);
 					
 					switch (choice) {
+
 						case JOptionPane.YES_OPTION:
 						
-							cancion = 2;
+							
 							contador = 0;
 							timer.start();
 							player_x = 0;
 							player_y = 0;
 
 							Nivel();
+						break;
 
-							break;
 						case JOptionPane.NO_OPTION:
 							
-							cancion = 1;
 							contador = 0;
 							timer.start();
 							player_x = 0;
 							player_y = 0;
 
 							Nivel();
+						break;
 
-
-							break;
 						case JOptionPane.CLOSED_OPTION:
+
 							System.exit(0);
-							break;
+						break;
 					}
 				
 				}
 
-				if(tecla == 87 && player_y > 0) {
-					player_y -= 10;
+
+				//Arriba
+				if(e.getKeyCode() == 87 && player_y > 0 && laberinto[player_y/var-1][player_x/var] !=1) {
+					player_y -= 20;
 				}
 				
-				if(tecla == 65 && player_x > 0) {
-					player_x -= 10;
+				//Izquierda
+				if(e.getKeyCode() == 65 && player_x > 0 && laberinto[player_y/var][player_x/var-1] !=1) {
+					player_x -= 20;
 				}
 				
-				if(tecla == 83 && player_y < 600-20) {
-					player_y += 10;
+				//Abajo
+				if(e.getKeyCode() == 83 && player_y < 600-20 && laberinto[player_y/var+1][player_x/var] !=1) {
+					player_y += 20;
 				}
 				
-				if(tecla == 68 && player_x < 800-20) {
-					player_x += 10;
+				//Derecha
+				if(e.getKeyCode() == 68 && player_x < 800-20 && laberinto[player_y/var][player_x/var+1] !=1) {
+					player_x += 20;
 				}
 
                 Juego.repaint();
+				Juego.revalidate();
 			}
 
 			@Override
-			public void keyReleased(KeyEvent e) {
-
-			}
+			public void keyReleased(KeyEvent e){}
 			
 		});
 		
@@ -290,9 +363,9 @@ public class Ventana extends JFrame {
             clip = AudioSystem.getClip();
 
 			
-			if(cancion == 1){
+			if(nivel == 1){
 				clip.open(AudioSystem.getAudioInputStream(new File("Adventure.wav").getAbsoluteFile()));
-			}else if(cancion ==2){
+			}else if(nivel ==2){
 				clip.open(AudioSystem.getAudioInputStream(new File("Speed.wav").getAbsoluteFile()));
 			}
 			
@@ -330,42 +403,51 @@ public class Ventana extends JFrame {
 		
 		public void paint(Graphics g){
 			
-	        super.paintComponent(g);
-
-	        //Línea
-	        //g.setColor(Color.BLUE);
-	        //g.drawLine(30, 70, 770, 70);
-
-	        //fondo
-	        g.setColor(new Color(44,46,12));
-	        g.fillRect(0, 0, 800, 600);
-	        //g.setColor(Color.BLACK);
-	        //g.drawRect(40, 40, 560, 60);
-
-	        
-	        //Rectángulo redondeado	
-	        //g.setColor(Color.red);
-	        //g.drawRoundRect(420, 100, 350, 60, 50, 50);
-	        
-	        
-	        //Meta
-	        Rect meta = new Rect(700,60,20,20,Color.cyan);
-	        g.setColor(meta.c);
-	        g.fillRect(meta.x, meta.y, meta.w, meta.h);
+			super.paintComponent(g);
 			
-	        //player
-	        Rect r = new Rect(player_x,player_y,20,20,Color.red);
-	        g.fillRect(player_x, player_y, 20, 20);
-	        g.setColor(r.c);
-	        g.fillRect(r.x, r.y, r.w, r.h);
+			//fondo
+			g.setColor(new Color(44,46,12));
+			g.fillRect(0, 0, 800, 600);
+			
+			for (int i = 0; i < 30; i++) {
+				for (int j = 0; j < 40; j++) {
+					
+					if(laberinto[i][j]==0){
+						
+					}
+					
+					if(laberinto[i][j]==1){
+						//BORDE/BARRERA
+
+						g.setColor(new Color(38,40,6));
+						g.fillRect(j*var,i*var,20,20);
+
+						
+					}
+					
+				}
+			}
+			
+			//Metahitbox
+			Rect metahitbox = new Rect(700,60,20,20,Color.cyan);
+			g.setColor(metahitbox.c);
+			g.fillRect(metahitbox.x, metahitbox.y, metahitbox.w, metahitbox.h);
+	        
+			//playerhitbox
+			Rect playerhitbox = new Rect(player_x,player_y,20,20,Color.red);
+			g.fillRect(player_x, player_y, 20, 20);
+			g.setColor(playerhitbox.c);
+			g.fillRect(playerhitbox.x, playerhitbox.y, playerhitbox.w, playerhitbox.h);
+			
+
+	        
 	    }
 		
 	}
 	
 	public class Rect{
 		
-		int x,y,w,h = 0;
-		
+		int x,y,w,h;
 		Color c = Color.black;
 		
 		Rect(int x,int y, int w, int h, Color c){
@@ -375,17 +457,19 @@ public class Ventana extends JFrame {
 			this.w = w;
 			this.h = h;
 			this.c = c;
+
 		}
 		
 		public boolean colision(Rect target) {
-			if (this.x < target.x + target.w && this.x + this.w > target.x &&               
-                this.y < target.y + target.h && this.y + this.h > target.y) {
+			if(this.x < target.x + target.w && this.x + this.w > target.x
+			&& this.y < target.y + target.h && this.y + this.h > target.y) {
 
-				return true;
-                
-			}
+                return true;
+            }
 			return false;
 		}
+
+
 	}
 	
 }
