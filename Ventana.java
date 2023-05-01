@@ -13,7 +13,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
-import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
@@ -37,6 +36,8 @@ public class Ventana extends JFrame {
 	int contador = 0;
 	int segundosTotales;
 	int horas,minutos,segundos;
+	int cancion = 1;
+	Clip clip;
 
 	/**
 	 * Launch the application.
@@ -121,9 +122,9 @@ public class Ventana extends JFrame {
 				tiempo.setText("T i e m p o: [" + String.format("%02d:%02d:%02d", horas, minutos, segundos) + "]");
 
 				try {
-
 					// Crear objeto Clip para reproducir el audio
 					Clip clip = AudioSystem.getClip();
+
 					clip.open(AudioSystem.getAudioInputStream(new File("FireBoyDeath.wav").getAbsoluteFile()));
 		
 					//bajar volumen audio
@@ -134,13 +135,6 @@ public class Ventana extends JFrame {
 					
 					// Reproducir el audio
 					clip.start();
-		
-					// Detener la reproducción
-					//clip.stop();
-					//clip.close();
-
-
-		
 				} catch (UnsupportedAudioFileException | IOException | LineUnavailableException l) {
 					l.printStackTrace();
 				}
@@ -161,33 +155,7 @@ public class Ventana extends JFrame {
 		panelAbajo.add(Reiniciar);
         panelAbajo.add(tiempo);
 
-		try {
-            // Cargar archivo de audio
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("Adventure.wav").getAbsoluteFile());
-
-            // Crear objeto Clip para reproducir el audio
-            Clip clip = AudioSystem.getClip();
-            clip.open(audioInputStream);
-
-			//bajar volumen audio
-			FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-			float volume = 0.4f; // volumen
-			float dB = (float) (Math.log(volume) / Math.log(10.0) * 20.0);
-			gainControl.setValue(dB);
-			
-            // Reproducir el audio
-            //clip.start();
-
-			//loopearlo
-			clip.loop(Clip.LOOP_CONTINUOUSLY);
-
-			// Detener la reproducción
-			//clip.stop();
-			//clip.close();
-
-        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-            e.printStackTrace();
-        }
+		Nivel();
 		
 		
 		Juego.add(new MyGraphics());
@@ -205,7 +173,81 @@ public class Ventana extends JFrame {
 				
 				int tecla = e.getKeyCode();
 				//System.out.println(tecla);
+				Rect r = new Rect(player_x,player_y,20,20,Color.red);
+
+
+	        
+	        	Rect meta = new Rect(700,60,20,20,Color.cyan);
+
+				Rect barrera = new Rect(700,60,20,20,Color.GREEN);
+
+				if(r.colision(meta)){
+					try {
+						
+						timer.stop();
+						clip.stop();
+						// Crear objeto Clip para reproducir el audio
+						Clip clip = AudioSystem.getClip();
+
+						if(cancion == 1){
+							clip.open(AudioSystem.getAudioInputStream(new File("FinishAdventure.wav").getAbsoluteFile()));
+						}else if(cancion ==2){
+							clip.open(AudioSystem.getAudioInputStream(new File("FinishSpeed.wav").getAbsoluteFile()));
+						}
+			
+						//bajar volumen audio
+						FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+						float volume = 0.4f; // volumen
+						float dB = (float) (Math.log(volume) / Math.log(10.0) * 20.0);
+						gainControl.setValue(dB);
+						
+						// Reproducir el audio
+						//clip.start();
+			
+						//loopearlo
+						clip.start();
+			
+						// Detener la reproducción
+						//clip.stop();
+						//clip.close();
+			
+					} catch (UnsupportedAudioFileException | IOException | LineUnavailableException o) {
+						o.printStackTrace();
+					}
+	
+					Object[] options = {"Siguiente Nivel", "Repetir nivel"};
+					int choice = JOptionPane.showOptionDialog(null, "Has finalizado el laberinto en [" + String.format("%02d:%02d:%02d", horas, minutos, segundos) + "]!", "Felicidades!", JOptionPane.YES_NO_OPTION, 1, null, options, options[0]);
+					
+					switch (choice) {
+						case JOptionPane.YES_OPTION:
+						
+							cancion = 2;
+							contador = 0;
+							timer.start();
+							player_x = 0;
+							player_y = 0;
+
+							Nivel();
+
+							break;
+						case JOptionPane.NO_OPTION:
+							
+							cancion = 1;
+							contador = 0;
+							timer.start();
+							player_x = 0;
+							player_y = 0;
+
+							Nivel();
+
+
+							break;
+						case JOptionPane.CLOSED_OPTION:
+							System.exit(0);
+							break;
+					}
 				
+				}
 
 				if(tecla == 87 && player_y > 0) {
 					player_y -= 10;
@@ -240,6 +282,44 @@ public class Ventana extends JFrame {
         Juego.revalidate();
 		
 	}
+
+	public void Nivel(){
+
+		try {
+
+            clip = AudioSystem.getClip();
+
+			
+			if(cancion == 1){
+				clip.open(AudioSystem.getAudioInputStream(new File("Adventure.wav").getAbsoluteFile()));
+			}else if(cancion ==2){
+				clip.open(AudioSystem.getAudioInputStream(new File("Speed.wav").getAbsoluteFile()));
+			}
+			
+
+			//bajar volumen audio
+			FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+			float volume = 0.4f; // volumen
+			float dB = (float) (Math.log(volume) / Math.log(10.0) * 20.0);
+			gainControl.setValue(dB);
+			
+            // Reproducir el audio
+            //clip.start();
+
+			//loopearlo
+			clip.loop(Clip.LOOP_CONTINUOUSLY);
+
+			// Detener la reproducción
+			//clip.stop();
+			//clip.close();
+
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            e.printStackTrace();
+        }
+
+
+
+	}
 	
 	public class MyGraphics extends JComponent{
 		private static final long serialVersionUID = 1L;
@@ -268,42 +348,13 @@ public class Ventana extends JFrame {
 	        //g.drawRoundRect(420, 100, 350, 60, 50, 50);
 	        
 	        
-	        Rect r = new Rect(player_x,player_y,20,20,Color.red);
-	        
-	        Rect p = new Rect(700,60,20,20,Color.cyan);
-	        g.setColor(p.c);
-	        g.fillRect(p.x, p.y, p.w, p.h);
-
-            if(r.colision(p)){
-				try {
-					// Crear objeto Clip para reproducir el audio
-					Clip clip = AudioSystem.getClip();
-					clip.open(AudioSystem.getAudioInputStream(new File("FinishAdventure.wav").getAbsoluteFile()));
-		
-					//bajar volumen audio
-					FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-					float volume = 0.4f; // volumen
-					float dB = (float) (Math.log(volume) / Math.log(10.0) * 20.0);
-					gainControl.setValue(dB);
-					
-					// Reproducir el audio
-					//clip.start();
-		
-					//loopearlo
-					clip.start();
-		
-					// Detener la reproducción
-					//clip.stop();
-					//clip.close();
-		
-				} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-					e.printStackTrace();
-				}
-
-				JOptionPane.showMessageDialog(null, "Has finalizado el laberinto en [" + String.format("%02d:%02d:%02d", horas, minutos, segundos) + "]", "Felicidades!", 1, null);
-			}
-
+	        //Meta
+	        Rect meta = new Rect(700,60,20,20,Color.cyan);
+	        g.setColor(meta.c);
+	        g.fillRect(meta.x, meta.y, meta.w, meta.h);
+			
 	        //player
+	        Rect r = new Rect(player_x,player_y,20,20,Color.red);
 	        g.fillRect(player_x, player_y, 20, 20);
 	        g.setColor(r.c);
 	        g.fillRect(r.x, r.y, r.w, r.h);
